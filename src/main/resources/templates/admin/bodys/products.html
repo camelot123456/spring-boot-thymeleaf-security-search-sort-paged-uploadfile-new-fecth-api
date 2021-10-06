@@ -1,0 +1,493 @@
+<th:block layout:fragment="content" layout:decorate=~{admin/layouts/index}>
+	<div class="">
+		<!-- -------------------------------------------------collapse form product------------------------------------------------ -->
+		
+		<div class="row collapse mx-3 mt-4 collapse-form-product" id="collapseExample">
+		  <form class="card card-body shadow bg-light form-add-edit" name="form-product" enctype="multipart/form-data">
+		  
+		  	<!-- -------------------------------------------------Tiêu đề------------------------------------------------ -->
+		  	<div class="text-center">
+		  		<h3 style="font-weight: bold;" class="title-product">Thêm mới sản phẩm</h3>
+		  	</div>
+		  	<hr class="my-4">
+		  	<!-- -------------------------------------------------Mã sản phẩm------------------------------------------------ -->
+		  	
+		    <div class="mb-3" style="display: flex;">
+		    	<label style="flex: 1; margin: auto;" for="id" class="form-label">Mã sản phẩm</label>
+		    	<input style="flex: 4;" type="text" class="form-control" id="id" name="id">
+		    	<input style="flex: 4;" type="hidden" class="form-control" id="_id" disabled="disabled"> <!-- Khi update thì id không được edit -->
+		    </div>
+		    <!-- -------------------------------------------------Danh mục sản phẩm------------------------------------------------ -->
+		    
+		    <div class="form-group mb-3" style="display: flex;">
+		    	<label style="flex: 1; margin: auto;" for="category" class="form-label">Danh mục sản phẩm</label>
+				<select style="flex: 4; margin-left: 6px;" class="form-select" id="category" name="category">
+				  <th:block th:each="category:${categories}">
+				  	<option th:value="${category.id}" th:text="${category.name}"></option>
+				  </th:block>
+				</select>
+		    </div>		  
+		    <!-- -------------------------------------------------Tên sản phẩm------------------------------------------------ -->
+		    
+		    <div class="form-group mb-3" style="display: flex;">
+		    	<label style="flex: 1; margin: auto;" for="name" class="form-label">Tên sản phẩm</label>
+		    	<input style="flex: 4;" type="text" class="form-control" id="name" name="name">
+		    </div>
+		    <!-- -------------------------------------------------Ảnh sản phẩm------------------------------------------------ -->
+		    
+		    <div class="form-group mb-3" style="display: flex; align-items: flex-start;">
+		    	<label style="flex: 1; margin-top: 8px;" for="file" class="form-label">Hình ảnh</label>
+		    	<!-- <input type="text" class="form-control" id="image" name="image"> -->
+	    		<div style="display: flex; flex-direction: column; flex: 4; margin-left: -6px;">
+	    			<input type="file" class="form-control file-input mb-3" id="file" name="file" accept=".jpg, .jpeg, .png">
+		    		<img src="/img/base/Photos-new-icon.png" class="img-thumbnail file-img" alt="" style="max-width: 150px; cursor: pointer; flex: 4">
+	    		</div>
+		    </div>
+		    <!-- -------------------------------------------------Số lượng sản phẩm------------------------------------------------ -->
+		    
+		    <div class="form-group mb-3" style="display: flex;">
+		    	<label style="flex: 1; margin: auto;" for="quantity" class="form-label">Số lượng</label>
+		    	<input style="flex: 4;" type="text" class="form-control" id="quantity" name="quantity">
+		    </div>
+		    <!-- -------------------------------------------------Giá sản phẩm------------------------------------------------ -->
+		    
+		    <div class="form-group mb-3" style="display: flex;">
+		    	<label style="flex: 1; margin: auto;" for="price" class="form-label">Đơn giá</label>
+		    	<input style="flex: 4;" type="text" class="form-control" id="price" name="price">
+		    </div>	  
+		    <!-- -------------------------------------------------Mô tả sản phẩm------------------------------------------------ -->
+		    
+		    <div class="form-group mb-3" style="display: flex;">
+		    	<label style="flex: 1;" for="editor1" class="form-label">Mô tả sản phẩm</label>
+		    	<div style="flex: 4; margin-left: -7px;">
+		    		<textarea id="editor1" name="description"></textarea>
+		    	</div>
+		    </div>	
+		    <!-- -------------------------------------------------Nút sự kiện------------------------------------------------ -->
+		    
+		    <div style="display: flex; justify-content: flex-end;">
+				<button type="button" class="btn btn-secondary btn-lg mx-3 collapse-btn-hidden">Hủy</button>
+				<button type="button" class="btn btn-primary btn-lg btn-add">Thêm</button>
+				<button type="button" class="btn btn-success btn-lg btn-update">Lưu</button>
+		  	</div>    
+		  </form>
+		<hr class="my-4">
+		</div>
+		<!-- -------------------------------------------------Danh sách sản phẩm------------------------------------------------ -->
+		
+		<div class="row mx-3 rounded shadow border card card-body bg-light">
+			<!-- -------------------------------------------------Tiêu đề------------------------------------------------ -->
+			
+			<div class="text-center">
+		  		<h3 style="font-weight: bold;">Danh sách sản phẩm</h3>
+		  	</div>
+		  	<hr class="my-4">
+		  	<!-- -------------------------------------------------form tìm kiếm------------------------------------------------ -->
+		  	<div style="display: flex; justify-content: space-between;">
+				<form class="d-flex" name='form-search' th:action="@{/admin/products/page/1}">
+					<input type="hidden" name="sortField" th:value="${sortField}">
+					<input type="hidden" name="sortDir" th:value="${sortDir}">
+				    <input class="form-control me-2" type="search" placeholder="Tìm..." aria-label="Search" name='keyword' th:value='${keyword}'>
+				    <button class="btn btn-outline-success w-50" type="submit">Tìm kiếm</button>
+				</form>		  		
+		  		<div>
+		  			<button type="button" hidden="hidden" class="mx-3 btn btn-outline-danger btn-del-all">Xóa</button>
+					<button type="button" class="btn btn-outline-primary collapse-btn-add">Thêm mới</button>
+		  		</div>
+		  	</div>
+		  	<hr class="my-4">
+		  	<!-- -------------------------------------------------Bảng sản phẩm------------------------------------------------ -->
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<!-- -------------------------------------Xử lý sắp xếp theo thuộc tính------------------------------------------------ -->
+						<th scope="col">
+							<input style="cursor: pointer;" class="form-check-input checkbox-all" type="checkbox" value="" id="flexCheckDefault">
+						</th>
+						<th scope="col">#</th>
+						<th scope="col">
+							<a th:href="@{'/admin/products/page/'+${currentPage}+'?sortField=id&sortDir='+${reverseSortDir}}">Id</a>
+						</th>
+						<th scope="col">Ảnh</th>
+						<th scope="col">
+							<a th:href="@{'/admin/products/page/'+${currentPage}+'?sortField=name&sortDir='+${reverseSortDir}}">Tên</a>
+						</th>
+						<th scope="col">
+							<a th:href="@{'/admin/products/page/'+${currentPage}+'?sortField=quantity&sortDir='+${reverseSortDir}}">Số lượng</a>
+						</th>
+						<th scope="col">
+							<a th:href="@{'/admin/products/page/'+${currentPage}+'?sortField=price&sortDir='+${reverseSortDir}}">Đơn giá</a>
+						</th>
+						<th scope="col" class="text-center">Công cụ</th>
+					</tr>
+				</thead>
+				<tbody>
+					<th:block th:each="product, state : ${products}">
+						<tr th:id="${product.id}">
+							<th scope="col" class="parent-checkbox">
+								<input style="cursor: pointer;" class="form-check-input checkbox-element" type="checkbox" th:id="${product.id}">
+							</th>
+							<td scope="row">[[${state.count}]]</td>
+							<td id="id">[[${product.id}]]</td>
+							<td><img style="width: 100px; border-radius: 4px;"  id="image" th:src="@{${product.imagePath}}"></td>
+							<td id="name">[[${product.name}]]</td>
+							<td id="quantity">[[${product.quantity}]]</td>
+							<td id="price">[[${product.price}]]</td>
+							<td class="text-center">
+								<a th:href="@{/admin/api/product/{id}(id=${product.id})}" class="btn btn-link">Chi tiết</a>
+								<a th:id="${product.id}" class="btn btn-link collapse-btn-element">Sửa</a>								
+								<a href="#" th:id="${product.id}" class="btn btn-link btn-del">Xóa</a>
+								<input th:id="description" th:value="${product.description}" type="hidden">
+								<input th:id="category-id" th:value="${product.category.id}" type="hidden">
+							</td>
+						</tr>
+					</th:block>
+				</tbody>
+			</table>
+			<!-- -------------------------------------------------Xử lý phân trang------------------------------------------------ -->
+			<div class="" style="display: flex; align-items: center; justify-content: space-between;">
+				<span>Tổng số chỉ mục: [[${totalItems}]] - Trang: [[${currentPage}]]/[[${totalPages}]]</span>
+				<nav aria-label="Page navigation example">
+				  <ul class="pagination justify-content-end" style="margin: auto;">
+				  	<!-- -----------------------------------------Xử lý lên đầu trang----------------------------------------- -->
+				    <li class="page-item" th:if="${currentPage > 1}">
+				      <a class="page-link" th:href="@{'/admin/products/page/1?sortField='+${sortField}+'&sortDir='+${sortDir}+${keyword != null ? '&keyword=' + keyword : ''}}">
+						<i class="fa fa-angle-double-left" aria-hidden="true"></i>
+					  </a>
+				    </li>
+				    <li class="page-item disabled" th:unless="${currentPage > 1}">
+				      <a class="page-link">
+				      	<i class="fa fa-angle-double-left" aria-hidden="true"></i>
+				      </a>
+				    </li>
+				    <!-- -----------------------------------------Xử lý lùi trang----------------------------------------- -->
+				    <li class="page-item" th:if="${currentPage > 1}">
+				      <a class="page-link" th:href="@{'/admin/products/page/'+${currentPage-1}+'?sortField='+${sortField}+'&sortDir='+${sortDir}+${keyword != null ? '&keyword=' + keyword : ''}}">
+						<i class="fa fa-angle-left" aria-hidden="true"></i>
+					  </a>
+				    </li>
+				    <li class="page-item disabled" th:unless="${currentPage > 1}">
+				      <a class="page-link">
+				      	<i class="fa fa-angle-left" aria-hidden="true"></i>
+				      </a>
+				    </li>
+				    <!-- -----------------------------------------Xử lý chọn trang----------------------------------------- -->
+				    <th:block th:each="i : ${#numbers.sequence(1, totalPages)}">
+					    <li class="page-item" th:if="${i != currentPage && i != 0}">
+					    	<a class="page-link" th:href="@{'/admin/products/page/'+${i}+'?sortField='+${sortField}+'&sortDir='+${sortDir}+${keyword != null ? '&keyword=' + keyword : ''}}">[[${i}]]</a>
+					    </li>
+					    <li class="page-item active"  th:unless="${i != currentPage}" style="cursor: default;">
+					    	<span class="page-link">[[${i}]]</span>
+					    </li>	
+				    </th:block>
+				    <!-- -----------------------------------------Xử lý qua trang----------------------------------------- -->
+				    <li class="page-item" th:if="${currentPage < totalPages}">
+				      <a class="page-link" th:href="@{'/admin/products/page/'+${currentPage+1}+'?sortField='+${sortField}+'&sortDir='+${sortDir}+${keyword != null ? '&keyword=' + keyword : ''}}">
+				      	<i class="fa fa-angle-right" aria-hidden="true"></i>
+					  </a>
+				    </li>
+				    <li class="page-item disabled" th:unless="${currentPage < totalPages}">
+				      <a class="page-link">
+					  	<i class="fa fa-angle-right" aria-hidden="true"></i>
+					  </a>
+				    </li>
+				    <!-- -----------------------------------------Xử lý về cuối trang----------------------------------------- -->
+				    <li class="page-item" th:if="${currentPage != totalPages}">
+				      <a class="page-link" th:href="@{'/admin/products/page/'+${totalPages}+'?sortField='+${sortField}+'&sortDir='+${sortDir}+${keyword != null ? '&keyword=' + keyword : ''}}">
+				      	<i class="fa fa-angle-double-right" aria-hidden="true"></i>
+					  </a>
+				    </li>
+				    <li class="page-item disabled" th:unless="${currentPage != totalPages}">
+				      <a class="page-link">
+					  	<i class="fa fa-angle-double-right" aria-hidden="true"></i>
+					  </a>
+				    </li>
+				  </ul>
+				</nav>
+			</div>
+		</div>	
+	</div>
+	<!-- Kết thúc khối block -->
+</th:block>
+
+
+<!-- -------------------------------------------------Toast thông báo trạng thái------------------------------------------------ -->
+<!-- <input type="hidden" th:value="${session.messageapi}" id="var-session-message-api"></input> -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+  <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header">
+      <i class="fa fa-info-circle rounded me-2" aria-hidden="true"></i>
+      <strong class="me-auto">Thông báo</strong>
+      <small>Vừa xong</small>
+      <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body">
+      <!-- <p th:text="${session.messageapi}"></p> -->
+      <p id="var-session-message-api" class="toast-content"></p>
+    </div>
+  </div>
+</div>
+
+<!-- -------------------------------------------------Modal xác thực hành vi xóa------------------------------------------------ -->
+<div class="modal fade" id="toggleMyModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title my-app-modal-title" id="exampleModalLabel"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Cảnh báo</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body my-app-modal-content">
+        Bạn có muốn xóa sản phẩm này không
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger my-app-modal-btn-pos">Xóa</button>
+        <button type="button" class="btn btn-secondary my-app-modal-btn-nev" data-bs-dismiss="modal">Hủy</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- -------------------------------------------------script------------------------------------------------ -->
+<script>
+	CKEDITOR.replace( 'editor1' );
+	var $ = document.querySelector.bind(document)
+	var $$ = document.querySelectorAll.bind(document)
+	
+	var titleProduct = $('.title-product')
+	var btnUpdate = $('.btn-update')
+	var btnAdd = $('.btn-add')
+	var myAppModalContent = $('.my-app-modal-content')
+	var toastContent = $('.toast-content')
+
+	//========================================Xử lý gọi toast======================================================
+	var toastLiveExample = document.getElementById('liveToast')
+    var toast = new bootstrap.Toast(toastLiveExample)
+	var varSessionMessageApi = $('#var-session-message-api')
+	if(varSessionMessageApi.value != ""){
+		//toast.show()
+	}
+	
+	
+	//=============================================Xử lý upload file ảnh=================================================
+	
+	
+	var fileInput = $('.file-input')
+	var fileImg = $('.file-img')
+	
+	if(fileInput && fileImg){
+		function showImageThumbnail(_fileinput) {
+			var file = _fileinput.files[0];
+			var reader = new FileReader();
+			
+			reader.addEventListener('load', (e)=>{
+				fileImg.src = e.target.result
+				console.log('e.target.result: ' + e.target.result)
+			})
+			
+			reader.readAsDataURL(file)
+			console.log('file: ' + file)
+		}
+		
+		fileImg.addEventListener('click', (e)=>{
+			fileInput.click();
+		})
+		
+		fileInput.addEventListener('change', (e)=>{
+			//fileImg.src = `/img/base/${fileInput.value.split(/(\\|\/)/g).pop()}`
+			showImageThumbnail(fileInput)
+		})
+	}
+	
+	//========================================Xử lý collapse form product======================================================
+	
+	var collapseFormProduct = $('.collapse-form-product')
+	var collapseBtnHidden = $('.collapse-btn-hidden')
+	var collapseBtnAdd = $('.collapse-btn-add')
+	var collapseBtnElement = Array.from($$('.collapse-btn-element'))
+	
+	collapseBtnAdd.addEventListener('click', (e)=>{
+		titleProduct.innerHTML = 'Thêm mới sản phẩm'
+		btnUpdate.setAttribute('hidden', 'hidden')
+		btnAdd.removeAttribute('hidden')
+		formAddEdit.reset()
+		
+		$('.form-add-edit #_id').setAttribute('type', 'hidden')
+		$('.form-add-edit #id').setAttribute('type', 'text')
+		toggleCollapse()
+	})
+	
+	collapseBtnHidden.addEventListener('click', (e)=>{
+		toggleCollapse()
+	})
+
+	collapseBtnElement.forEach((element)=>{
+		element.addEventListener('click', (e)=>{
+			titleProduct.innerHTML = 'Chỉnh sửa sản phẩm'
+			btnUpdate.removeAttribute('hidden')
+			btnAdd.setAttribute('hidden', 'hidden')
+			
+			//=====================================Xử lý hiển thị sản phẩm cần sửa===================================
+			$('.form-add-edit #_id').value = $('.form-add-edit #id').value = $(`#${event.target.id} #id`).textContent
+			$('.form-add-edit #id').setAttribute('type', 'hidden')
+			$('.form-add-edit #_id').setAttribute('type', 'text')
+			$('.form-add-edit #name').value = $(`#${event.target.id} #name`).textContent
+			$('.form-add-edit #quantity').value = $(`#${event.target.id} #quantity`).textContent
+			$('.form-add-edit #price').value = $(`#${event.target.id} #price`).textContent
+			$('.form-add-edit #category').value = $(`#${event.target.id} #category-id`).value
+			CKEDITOR.instances.editor1.setData($(`#${event.target.id} #description`).value)
+			fileImg.src = $(`#${event.target.id} #image`).src
+			
+			toggleCollapse()
+		})
+	})
+	
+	function toggleCollapse(){
+		new bootstrap.Collapse(collapseFormProduct, {
+			  hiden: true
+		})
+		window.scrollTo({ top: 0, behavior: 'smooth' });
+	}
+	
+	
+	//=======================================Xử lý chọn nhiều checkbox=======================================================
+	
+	var checkboxAll = $('.checkbox-all')
+	var checkboxElement = Array.from($$('.checkbox-element'))
+	var btnDelAll = $('.btn-del-all')
+	var checkboxLenghtFirst = Array.from($$('.parent-checkbox input[type=checkbox]')).length;
+	
+	checkboxAll.addEventListener('change', (e)=>{
+		var isChecked = checkboxAll.checked
+		checkboxElement.forEach((element)=>{
+			element.checked = isChecked
+			handlerBtnDelAll(checkboxAll.checked)	
+		})
+	})
+	
+	checkboxElement.forEach((element)=>{
+		element.addEventListener('change', (e)=>{
+			var checkboxLenght = Array.from($$('.parent-checkbox input[type=checkbox]:checked')).length;
+			var resCheckboxAll = checkboxLenghtFirst == checkboxLenght ? true : false
+			checkboxAll.checked = resCheckboxAll
+			handlerBtnDelAll(checkboxLenght)
+		})
+	})
+	
+	function handlerBtnDelAll(checkboxLenght){
+		checkboxLenght ?  btnDelAll.removeAttribute('hidden') : btnDelAll.setAttribute('hidden', 'hidden')
+	}
+	
+	//===========================================Tạo hàm call API=======================================================
+	var formAddEdit = $('.form-add-edit')	
+	
+	function fetchAPI(_url, _method, _formData, successToast, failToast){
+		fetch(_url, {
+			method: _method,
+			body: _formData
+		})
+		.then(resp =>{
+			if(resp.status != 200){
+				toastContent.innerHTML = failToast
+			}else{
+				toastContent.innerHTML = successToast
+			}
+			toast.show()
+		})
+		.catch(err=>{
+			toastContent.innerHTML = failToast
+			toast.show()
+		})
+	}
+	//=======================================Xử lý thêm mới sản phẩm=======================================================
+	
+	if(btnAdd){
+		btnAdd.addEventListener('click', (e)=>{
+			var formData = new FormData(formAddEdit)
+			
+			formData.append('file', document.forms['form-product'].file.files[0])
+			formData.append('product', new Blob([JSON.stringify({
+				'id': formData.get('id'),
+				'name': formData.get('name'),
+				'quantity': formData.get('quantity'),
+				'price': formData.get('price'),
+				'description': CKEDITOR.instances.editor1.getData(),
+				'category': {
+					'id': formData.get('category')
+				}
+			})], {
+				type: 'application/json'
+			}))
+			fetchAPI('/admin/api/product', 'POST', formData, 'Thêm mới sản phẩm thành công', 'Thêm mới sản phẩm thất bại')
+			setTimeout("location.reload(true);",1000);
+		})
+	}
+	
+	
+	//=============================================Xử lý xóa sản phẩm=================================================
+		
+		
+	var btnDel = Array.from($$('.btn-del'))
+	var modelBtnDel = $('.my-app-modal-btn-pos')
+	var myModal = new bootstrap.Modal($('#toggleMyModal'), {
+	  keyboard: false
+	})
+	
+	var ids = []
+	
+	//Xử lý tạo mảng chứa tất cả id được chọn
+	btnDelAll.addEventListener('click', (e)=>{
+		myAppModalContent.innerHTML = "Bạn có muốn xóa những sản phẩm này không ?"
+		myModal.show()
+		Array.from($$('.parent-checkbox input[type=checkbox]:checked')).forEach((element)=>{
+			ids.push(element.id)
+		})
+	})
+	
+	//Xử lý tạo mảng chứa id được chọn
+	btnDel.forEach((element)=>{
+		element.addEventListener('click', (e)=>{
+			myAppModalContent.innerHTML = "Bạn có muốn xóa sản phẩm này không ?"
+			ids.push(e.target.id)
+			myModal.show()//Show toast
+		})
+	})
+	
+	//Xử lý sự kiện xóa
+	modelBtnDel.addEventListener('click', (e)=>{
+		var formData = new FormData(formAddEdit)
+		
+		formData.append('product', new Blob([JSON.stringify({
+			'ids': ids
+		})], {
+			type: 'application/json'
+		}))
+		fetchAPI('/admin/api/product', 'DELETE', formData, 'Xóa sản phẩm thành công', 'Xóa sản phẩm thất bại')
+		setTimeout("location.reload(true);",1000);
+	})
+	
+	
+	//=============================================Xử lý cập nhập sản phẩm cần sửa=================================================
+		
+	btnUpdate.addEventListener('click', (e)=>{
+		var formData = new FormData(formAddEdit)
+		
+		formData.append('file', document.forms['form-product'].file.files[0])
+		formData.append('product', new Blob([JSON.stringify({
+			'id': formData.get('id'),
+			'name': formData.get('name'),
+			'quantity': formData.get('quantity'),
+			'price': formData.get('price'),
+			'description': CKEDITOR.instances.editor1.getData(),
+			'category': {
+				'id': formData.get('category')
+			}
+		})], {
+			type: 'application/json'
+		}))
+		fetchAPI('/admin/api/product', 'PUT', formData, 'Cập nhập sản phẩm thành công', 'Cập nhập sản phẩm thất bại')
+		setTimeout("location.reload(true);",1000);
+	})
+
+</script>

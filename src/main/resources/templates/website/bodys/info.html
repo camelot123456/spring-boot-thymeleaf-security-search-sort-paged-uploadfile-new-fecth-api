@@ -1,0 +1,93 @@
+<th:block layout:fragment="content" layout:decorate="~{website/layouts/index}">
+	<div class="container" style="display: flex; justify-content: center; align-items: center;">
+		<!-- <form action="/web/view-info" method="post" enctype="multipart/form-data" class="my-4 bg-light border p-4 rounded shadow form-data">
+			<div class="mb-3 form-froup">
+			  <label for="name" class="form-label">Name</label>
+			  <input type="text" class="form-control" id="name" name="name">
+			</div>
+			<div class="mb-3 form-froup">
+			  <label for="photo" class="form-label">Photo</label>
+			  <input class="form-control" type="file" id="photo" name="photo">
+			</div>
+			<div class="mb-3 form-froup">
+			  <label for="filecv" class="form-label">Files CV</label>
+			  <input class="form-control" type="file" id="filecv">
+			</div>	
+			<button class="btn btn-primary btn-save" type="button">Save</button>
+			<button class="btn btn-secondary" type="reset">Cancel</button>		
+		</form> -->
+		<form name="userForm" class="form-file">
+        <label> File : </label>
+        <br/>
+        <input name="file" type="file">
+        <br/>
+        <label> First Name : </label>
+        <br/>
+        <input id="firstName" name="firstName" />
+        <br/>
+        <label> Last Name : </label>
+        <br/>
+        <input id="lastName" name="lastName" />
+        <br/>
+        <input type="button" value="Submit" id="submit" onclick="onSubmit()" />
+    </form>		
+	</div>
+</th:block>
+
+<script>
+        function onSubmit() {
+
+            var formData = new FormData(document.querySelector('.form-file'));
+
+            formData.append("file", document.forms["userForm"].file.files[0]);
+            formData.append('user', new Blob([JSON.stringify({
+                "firstName": formData.get('firstName'),//document.getElementById("firstName").value,
+                "lastName": formData.get('lastName')//document.getElementById("lastName").value
+            })], {
+                    type: "application/json"
+                }));
+            fetch('/upload', {
+                method: 'post',
+                body: formData
+            }).then(response => {
+                if (response.status !== 200) {
+                    alert("There was an error!");
+                } else {
+                    alert("Request successful");
+                }
+            }).catch(err => {
+                alert("There was an error!");
+            });
+        }
+    </script>
+<!-- <script>
+	var $ = document.querySelector.bind(document)
+	var $$ = document.querySelectorAll.bind(document)
+	
+	var btnSave = $('.btn-save')
+	
+	function fetchAPI(data){
+		fetch('http://localhost:8080/web/view-info', {
+			method: 'POST',
+			headers:{
+				'Content-Type': 'application/json',
+				'Accept': 'application/json'
+			},
+			data: JSON.stringify(data)
+		})
+		.then(response => response.json())
+	    .then(data => console.log(data));
+	}
+	
+	btnSave.addEventListener('click', (e)=>{
+		e.preventDefault()
+		var formData = new FormData($('.form-data'))
+		
+		var name = formData.get('name')
+		var photo = formData.get('photo')
+		var data = {name, photo}
+		console.log(data)
+		fetchAPI(data)
+	})
+	
+</script> -->
