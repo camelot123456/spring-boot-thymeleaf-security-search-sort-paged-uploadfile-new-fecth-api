@@ -18,5 +18,7 @@ public interface IProductRepository extends JpaRepository<ProductEntity, String>
 			+ " OR p.name LIKE %?1%"
 			+ " OR p.id LIKE %?1%")
 	public Page<ProductEntity> search(String keyword, Pageable pageable);
+
+	public ProductEntity findOneById(String id);
 	
 }

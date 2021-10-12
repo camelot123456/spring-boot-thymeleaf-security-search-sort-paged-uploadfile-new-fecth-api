@@ -13,12 +13,12 @@ public class ErrorController {
 	
 	@RequestMapping(value = {"/error/403"})
 	public String error403() {
-		return "error/bodys/401";
+		return "error/bodys/403";
 	}
 	
 	@RequestMapping(value = {"/error/404"})
 	public String error404() {
-		return "error/bodys/401";
+		return "error/bodys/404";
 	}
 	
 	@RequestMapping(value = {"/error/500"})

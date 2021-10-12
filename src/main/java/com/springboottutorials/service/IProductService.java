@@ -14,5 +14,5 @@ public interface IProductService {
 	
 	public void update(ProductEntity entity);
 	
-	public void delete(String[] ids);
+	public void delete(String[] ids, String[] images, String uploadDir);
 }

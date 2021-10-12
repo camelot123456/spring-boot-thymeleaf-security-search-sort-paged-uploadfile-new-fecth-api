@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
     <head>
         <th:block th:insert="taglib.html :: head"></th:block>
     </head>
     <body>
         <div id="layoutError">
             <div id="layoutError_content">
-                <th:block th:inseret="error/bodys/401.html"></th:block>
+                <th:block layout:fragment="content"></th:block>
             </div>
             <div id="layoutError_footer">
                 <th:block th:insert="taglib.html :: footer"></th:block>

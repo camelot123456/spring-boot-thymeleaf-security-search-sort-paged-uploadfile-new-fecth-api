@@ -10,4 +10,5 @@ public interface IAccountRepository extends JpaRepository<AccountEntity, String>
 
 	public AccountEntity findOneByUsername(String username);
 	
+	public AccountEntity findOneById(String id);
 }

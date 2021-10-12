@@ -6,13 +6,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.springboottutorials.entity.AccountEntity;
+import com.springboottutorials.entity.enums.EAuthenticationProvider;
 import com.springboottutorials.repository.IAccountRepository;
 import com.springboottutorials.service.IAccountService;
 
 @Service
-public class AccountService implements IAccountService{
+public class AccountService implements IAccountService {
 
-	@Autowired private IAccountRepository accountRepository;
+	@Autowired
+	private IAccountRepository accountRepository;
 
 	@Override
 	public List<AccountEntity> findAll() {
@@ -43,11 +45,40 @@ public class AccountService implements IAccountService{
 	}
 
 	@Override
-	public AccountEntity findOne(String username) {
+	public AccountEntity findOneByUsername(String username) {
 		// TODO Auto-generated method stub
 		return accountRepository.findOneByUsername(username);
 	}
-	
-	
-	
+
+	@Override
+	public void saveOneNewAccountByOAuth(String id, String email, String name, String avatar,
+			EAuthenticationProvider provider) {
+		// TODO Auto-generated method stub
+		AccountEntity account = new AccountEntity();
+		account.setUsername(email);
+		account.setFullname(name);
+		account.setImage(avatar);
+		account.setAuthProvider(provider);
+		account.setId(id);
+		accountRepository.save(account);
+	}
+
+	@Override
+	public void updateOneNewAccountByOAuth(AccountEntity account, String email, String name, String avatar,
+			EAuthenticationProvider provider) {
+		// TODO Auto-generated method stub
+		account.setFullname(name);
+		account.setUsername(email);
+		account.setImage(avatar);
+		account.setAuthProvider(provider);
+		accountRepository.save(account);
+	}
+
+	@Override
+	public AccountEntity findOneById(String id) {
+		// TODO Auto-generated method stub
+		return accountRepository.findOneById(id);
+	}
+
+
 }

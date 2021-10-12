@@ -5,12 +5,16 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+
+import com.springboottutorials.entity.enums.EAuthenticationProvider;
 
 @Entity
 @Table(name = "ACCOUNT")
@@ -20,18 +24,22 @@ public class AccountEntity {
 	@Column(name = "ID")
 	private String id;
 
-	@Column(name = "fullname", columnDefinition = "nvarchar(255) not null")
+	@Column(name = "fullname", columnDefinition = "nvarchar(255) null")
 	private String fullname;
 
 	@Column(name = "[IMAGE]", columnDefinition = "nvarchar(255) default N'https://friconix.com/jpg/fi-cnsuxl-question-mark.jpg'")
 	private String image;
-
-	@Column(name = "USERNAME", columnDefinition = "varchar(255) not null unique")
+	
+	@Column(name = "USERNAME", columnDefinition = "varchar(255) null")
 	private String username;
 
 	@Column(name = "[PASSWORD]", columnDefinition = "varchar(255) default '1'")
 	private String password;
 
+	@Enumerated(EnumType.STRING)
+	@Column(name = "AUTH_PROVIDER", columnDefinition = "varchar(15)")
+	private EAuthenticationProvider authProvider;
+	
 	@ManyToMany(fetch=FetchType.EAGER)
 	@JoinTable(name = "ACCOUNT_ROLE", joinColumns = @JoinColumn(name = "ID_ACCOUNT"), inverseJoinColumns = @JoinColumn(name = "ID_ROLE"))
 	private List<RoleEntity> roles = new ArrayList<>();
@@ -78,9 +86,17 @@ public class AccountEntity {
 
 	public List<RoleEntity> getRoles() {
 		return roles;
-	}
+	} 
 
 	public void setRoles(List<RoleEntity> roles) {
 		this.roles = roles;
+	}
+
+	public EAuthenticationProvider getAuthProvider() {
+		return authProvider;
+	}
+
+	public void setAuthProvider(EAuthenticationProvider authProvider) {
+		this.authProvider = authProvider;
 	}
 }

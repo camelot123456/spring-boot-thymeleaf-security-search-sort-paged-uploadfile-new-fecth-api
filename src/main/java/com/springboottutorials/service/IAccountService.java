@@ -3,6 +3,7 @@ package com.springboottutorials.service;
 import java.util.List;
 
 import com.springboottutorials.entity.AccountEntity;
+import com.springboottutorials.entity.enums.EAuthenticationProvider;
 
 public interface IAccountService {
 
@@ -14,8 +15,12 @@ public interface IAccountService {
 	
 	public void delete(String[] ids);
 
-	public AccountEntity findOne(String username);
+	public AccountEntity findOneByUsername(String username);
+
+	public void saveOneNewAccountByOAuth(String id, String email, String name, String avatar, EAuthenticationProvider provider);
+
+	public void updateOneNewAccountByOAuth(AccountEntity account, String email, String name, String avatar, EAuthenticationProvider provider);
 	
-	
-	
+	public AccountEntity findOneById(String id);
+
 }

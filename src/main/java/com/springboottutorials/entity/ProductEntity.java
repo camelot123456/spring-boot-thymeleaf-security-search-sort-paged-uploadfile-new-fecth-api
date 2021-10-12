@@ -16,6 +16,9 @@ public class ProductEntity {
 	@Transient
 	private String[] ids;
 	
+	@Transient
+	private String[] images;
+	
 	@Id
 	@Column(name = "ID")
 	private String id;
@@ -109,5 +112,13 @@ public class ProductEntity {
 			return null;
 		}
 		return "/img/product/" + image;
+	}
+
+	public String[] getImages() {
+		return images;
+	}
+
+	public void setImages(String[] images) {
+		this.images = images;
 	}
 }

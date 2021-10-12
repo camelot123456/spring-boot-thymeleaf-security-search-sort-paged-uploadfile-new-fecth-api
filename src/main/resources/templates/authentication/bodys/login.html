@@ -19,10 +19,26 @@
 	                                <input class="form-check-input" id="inputRememberPassword" type="checkbox" name="remember-me" />
 	                                <label class="form-check-label" for="inputRememberPassword">Remember Password</label>
 	                            </div>
-	                            <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
+	                            <div class="d-flex flex-column align-items-center justify-content-between mt-4 mb-0">
+	                                <button type="submit" class="w-100 btn btn-primary btn-lg mb-2">Login</button>
 	                                <a class="small" href="password.html">Forgot Password?</a>
-	                                <button type="submit" class="btn btn-primary">Login</button>
 	                            </div>
+	                            <h4 class="text-center my-4">--OR--</h4>
+                            	<a style="opacity: 0.9" class="w-100 btn btn-danger btn-lg mb-3" th:href="@{/oauth2/authorization/google}">
+                            		<i class="fab fa-google"></i> Login with Google
+                            	</a>
+                            	
+                            	<a style="opacity: 0.9" class="w-100 btn btn-primary btn-lg mb-3" th:href="@{/oauth2/authorization/facebook}">
+                            		<i class="fab fa-facebook-f"></i> Login with Facebook
+                            	</a>
+	                            
+	                            <a class="w-100 btn btn-dark btn-lg mb-3" th:href="@{/oauth2/authorization/github}">
+                            		<i class="fab fa-github"></i> Login with Github
+                            	</a>
+                            	
+                            	<a class="w-100 btn btn-dark btn-lg" th:href="@{/oauth2/authorization/yahoo}" style="background-color: #3e22b3">
+                            		<i class="fab fa-yahoo"></i> Login with Yahoo
+                            	</a>
 	                        </form>
 	                    </div>
 	                    <div class="card-footer text-center py-3">

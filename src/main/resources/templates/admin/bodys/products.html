@@ -37,7 +37,6 @@
 		    
 		    <div class="form-group mb-3" style="display: flex; align-items: flex-start;">
 		    	<label style="flex: 1; margin-top: 8px;" for="file" class="form-label">Hình ảnh</label>
-		    	<!-- <input type="text" class="form-control" id="image" name="image"> -->
 	    		<div style="display: flex; flex-direction: column; flex: 4; margin-left: -6px;">
 	    			<input type="file" class="form-control file-input mb-3" id="file" name="file" accept=".jpg, .jpeg, .png">
 		    		<img src="/img/base/Photos-new-icon.png" class="img-thumbnail file-img" alt="" style="max-width: 150px; cursor: pointer; flex: 4">
@@ -74,7 +73,6 @@
 		<hr class="my-4">
 		</div>
 		<!-- -------------------------------------------------Danh sách sản phẩm------------------------------------------------ -->
-		
 		<div class="row mx-3 rounded shadow border card card-body bg-light">
 			<!-- -------------------------------------------------Tiêu đề------------------------------------------------ -->
 			
@@ -129,7 +127,7 @@
 							</th>
 							<td scope="row">[[${state.count}]]</td>
 							<td id="id">[[${product.id}]]</td>
-							<td><img style="width: 100px; border-radius: 4px;"  id="image" th:src="@{${product.imagePath}}"></td>
+							<td><img style="width: 100px; border-radius: 4px;" id="image" th:src="@{${product.imagePath}}"></td>
 							<td id="name">[[${product.name}]]</td>
 							<td id="quantity">[[${product.quantity}]]</td>
 							<td id="price">[[${product.price}]]</td>
@@ -283,11 +281,9 @@
 			
 			reader.addEventListener('load', (e)=>{
 				fileImg.src = e.target.result
-				console.log('e.target.result: ' + e.target.result)
 			})
 			
 			reader.readAsDataURL(file)
-			console.log('file: ' + file)
 		}
 		
 		fileImg.addEventListener('click', (e)=>{
@@ -338,7 +334,6 @@
 			$('.form-add-edit #category').value = $(`#${event.target.id} #category-id`).value
 			CKEDITOR.instances.editor1.setData($(`#${event.target.id} #description`).value)
 			fileImg.src = $(`#${event.target.id} #image`).src
-			
 			toggleCollapse()
 		})
 	})
@@ -435,6 +430,7 @@
 	})
 	
 	var ids = []
+	var images = []
 	
 	//Xử lý tạo mảng chứa tất cả id được chọn
 	btnDelAll.addEventListener('click', (e)=>{
@@ -442,6 +438,7 @@
 		myModal.show()
 		Array.from($$('.parent-checkbox input[type=checkbox]:checked')).forEach((element)=>{
 			ids.push(element.id)
+			images.push($(`#${element.id} #image`).src.split(/(\\|\/)/g).pop())
 		})
 	})
 	
@@ -450,6 +447,7 @@
 		element.addEventListener('click', (e)=>{
 			myAppModalContent.innerHTML = "Bạn có muốn xóa sản phẩm này không ?"
 			ids.push(e.target.id)
+			images.push($(`#${element.id} #image`).src.split(/(\\|\/)/g).pop())
 			myModal.show()//Show toast
 		})
 	})
@@ -457,12 +455,14 @@
 	//Xử lý sự kiện xóa
 	modelBtnDel.addEventListener('click', (e)=>{
 		var formData = new FormData(formAddEdit)
-		
+
 		formData.append('product', new Blob([JSON.stringify({
-			'ids': ids
+			'ids': ids,
+			'images': images
 		})], {
 			type: 'application/json'
 		}))
+		console.log(images)
 		fetchAPI('/admin/api/product', 'DELETE', formData, 'Xóa sản phẩm thành công', 'Xóa sản phẩm thất bại')
 		setTimeout("location.reload(true);",1000);
 	})

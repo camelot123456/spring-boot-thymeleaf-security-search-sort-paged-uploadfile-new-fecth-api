@@ -24,6 +24,8 @@ import com.springboottutorials.utils.UploadFileUtil;
 @Controller
 public class AdminController {
 
+	public static final String PATH_DIRECTORY = "src/main/resources/static/img/product/";
+	
 	@Autowired private IProductService productService;
 	@Autowired private ICategoryService categoryService;
 	
@@ -57,9 +59,6 @@ public class AdminController {
 		model.addAttribute("reverseSortDir", reverseSortDir);
 		model.addAttribute(SystemConstant.PRODUCTS, page.getContent());
 		model.addAttribute(SystemConstant.CATEGORIES, categoryService.findAll());
-		//Xu ly sau (dung model)
-		request.getSession().setAttribute("messageapi", SystemConstant.MESSAGE_API);
-//		model.addAttribute("messageapi", SystemConstant.MESSAGE_API);
 		return "admin/bodys/products";
 	}
 	
@@ -70,24 +69,25 @@ public class AdminController {
 	}
 	
 	@RequestMapping(value = {"/admin/api/product"}, method = RequestMethod.POST, consumes = {"multipart/form-data"})
-	public String save(@RequestPart("product") ProductEntity product, @RequestPart("file") MultipartFile file) throws IOException {
+	public String save(@RequestPart("product") ProductEntity product,
+			@RequestPart("file") MultipartFile file) throws IOException {
 		product.setImage(file.getOriginalFilename());
-		UploadFileUtil.saveFile("src/main/resources/static/img/product/", file.getOriginalFilename(), file);
+		UploadFileUtil.saveFile(PATH_DIRECTORY, file.getOriginalFilename(), file);
 		productService.save(product);
 		return "redirect:/admin/products";
 	}
 	
-	@RequestMapping(value = {"/admin/api/product"}, method = RequestMethod.PUT)
+	@RequestMapping(value = {"/admin/api/product"}, method = RequestMethod.PUT, consumes = {"multipart/form-data"})
 	public String update(@RequestPart("product") ProductEntity product, @RequestPart("file") MultipartFile file) throws IOException {
 		product.setImage(file.getOriginalFilename());
-		UploadFileUtil.saveFile("src/main/resources/static/img/product/", file.getOriginalFilename(), file);
+		UploadFileUtil.saveFile(PATH_DIRECTORY, file.getOriginalFilename(), file);
 		productService.update(product);
 		return "redirect:/admin/products";
 	}
 	
 	@RequestMapping(value = {"/admin/api/product"}, method = RequestMethod.DELETE)
 	public String delete(@RequestPart("product") ProductEntity product) {
-		productService.delete(product.getIds());
+		productService.delete(product.getIds(), product.getImages(), PATH_DIRECTORY);
 		return "redirect:/admin/products";
 	}
 

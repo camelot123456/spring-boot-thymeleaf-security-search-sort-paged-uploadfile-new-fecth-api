@@ -1,0 +1,8 @@
+Nhập lệnh trên cmd
+pip install mssql-cli //download sql server cli on win
+SqlLocalDB.exe  
+
+connect sql cli
+sqlcmd -U sa // mssql-cli(support code)
+--master> select name from sys.databases |-- get all database name
+--master> select * from sys.databases    |

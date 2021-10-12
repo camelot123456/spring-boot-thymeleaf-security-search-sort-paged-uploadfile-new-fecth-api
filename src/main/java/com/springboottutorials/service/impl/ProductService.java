@@ -6,11 +6,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.springboottutorials.constant.SystemConstant;
 import com.springboottutorials.entity.ProductEntity;
 import com.springboottutorials.repository.IProductRepository;
 import com.springboottutorials.service.IProductService;
-import com.springboottutorials.utils.PropertiesUtil;
+import com.springboottutorials.utils.UploadFileUtil;
 
 @Service
 public class ProductService implements IProductService {
@@ -18,8 +17,6 @@ public class ProductService implements IProductService {
 	@Autowired
 	private IProductRepository productRepository;
 	
-	long count = 0;
-
 	@Override
 	public Page<ProductEntity> findAll(int pageNumber, String sortField, String sortDir, String keyword) {
 		// TODO Auto-generated method stub
@@ -35,53 +32,33 @@ public class ProductService implements IProductService {
 	@Override
 	public void save(ProductEntity entity) {
 		// TODO Auto-generated method stub
-		count = productRepository.count();
-		if (productRepository.existsById(entity.getId())) {
-			System.out.println("ERROR!!!");
-		}else {
+		if (!productRepository.existsById(entity.getId())) {
 			productRepository.save(entity);
 		}
-		if (count != productRepository.count()) {
-			SystemConstant.MESSAGE_API = PropertiesUtil.getValue("message.api.insert.success");
-		} else {
-			SystemConstant.MESSAGE_API = PropertiesUtil.getValue("message.api.insert.error");
-		}
+		
 	}
 
 	@Override
 	public void update(ProductEntity entity) {
 		// TODO Auto-generated method stub
-		count = productRepository.count();
 		if (productRepository.existsById(entity.getId())) {
 			productRepository.save(entity);
-			if (count == productRepository.count()) {
-				SystemConstant.MESSAGE_API = PropertiesUtil.getValue("message.api.update.success");
-			} else {
-				SystemConstant.MESSAGE_API = PropertiesUtil.getValue("message.api.update.error");
-			}
-		} else {
-			SystemConstant.MESSAGE_API = PropertiesUtil.getValue("message.api.update.error");
 		}
 	}
 
 	@Override
-	public void delete(String[] ids) {
+	public void delete(String[] ids, String[] images, String uploadDir) {
 		// TODO Auto-generated method stub
-		count = productRepository.count();
-		for (String id : ids) {
-			productRepository.deleteById(id);
-		}
-		if (count != productRepository.count()) {
-			SystemConstant.MESSAGE_API = PropertiesUtil.getValue("message.api.delete.success");
-		} else {
-			SystemConstant.MESSAGE_API = PropertiesUtil.getValue("message.api.delete.error");
+		for (int i = 0; i < ids.length; i++) {
+			UploadFileUtil.deleteFile(uploadDir, images[i]);
+			productRepository.deleteById(ids[i]);
 		}
 	}
 
 	@Override
 	public ProductEntity findOne(String id) {
 		// TODO Auto-generated method stub
-		return productRepository.getById(id);
+		return productRepository.findOneById(id);
 	}
 
 }

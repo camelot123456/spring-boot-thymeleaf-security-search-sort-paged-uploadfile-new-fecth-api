@@ -12,6 +12,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.rememberme.InMemoryTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 
+import com.springboottutorials.security.oauth.google.CustomOAuth2UserService;
 import com.springboottutorials.service.authorization.DetailsService;
 
 @Configuration
@@ -20,16 +21,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private DetailsService detailsService;
-
-//	@Autowired
-//	private DataSource dataSource;
 	
-//	@Bean
-//	public PersistentTokenRepository persistentTokenRepository() {
-//		JdbcTokenRepositoryImpl db = new JdbcTokenRepositoryImpl();
-//		db.setDataSource(dataSource);
-//		return db;
-//	}
+	@Autowired
+	private CustomOAuth2UserService customOAuth2UserService;
+	
+	@Autowired
+	private CustomOAuth2LoginSuccessHandler customOAuth2LoginSuccessHandler;
 	
 	@Bean
 	public BCryptPasswordEncoder passwordEncoder() {
@@ -40,10 +37,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
 		
-		auth.inMemoryAuthentication().withUser("camelot").password("{noop}1").roles("ADMIN", "USER", "MANAGER");
+		auth.inMemoryAuthentication().withUser("camelot")
+		.password("{noop}1").roles("ADMIN", "USER", "MANAGER");
 		
 		auth.userDetailsService(detailsService).passwordEncoder(passwordEncoder());
-
 	}
 	
 	@Bean
@@ -61,24 +58,51 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		// TODO Auto-generated method stub
 		http.csrf().disable();
+		
+		//no authentication
+		http.authorizeRequests()
+			.antMatchers("/", "/login", "/logout", "/register", "oauth2/**")
+			.permitAll();
 
-		http.authorizeRequests().antMatchers("/", "/login", "/logout", "/register").permitAll();
+		//authorization
+		http.authorizeRequests()
+			.antMatchers("/admin/**")
+			.access("hasAnyRole('ROLE_ADMIN')");
+		http.authorizeRequests()
+			.antMatchers("/user/**")
+			.access("hasAnyRole('ROLE_USER')");
+		http.authorizeRequests()
+			.antMatchers("/manager/**")
+			.access("hasAnyRole('ROLE_MANAGER')");
 
-		http.authorizeRequests().antMatchers("/admin/**").access("hasAnyRole('ROLE_ADMIN')");
+		//authorizi exception
+		http.authorizeRequests()
+			.and().exceptionHandling().accessDeniedPage("/error/403");
+		
+		//authentication local
+		http.authorizeRequests()
+			.and().formLogin().loginPage("/login").usernameParameter("username")
+			.passwordParameter("password").loginProcessingUrl("/handler_login_success")
+			.successHandler(successHandler())
+			.failureUrl("/login?error=true");
+		
+		//logout
+		http.authorizeRequests()
+			.and().logout().logoutUrl("/logout").logoutSuccessUrl("/home");
+		http.authorizeRequests()
+			.and().logout().deleteCookies("JSESSIONID", "remember-me");
+		
+		//authentication auth2
+		http.authorizeRequests()
+			.and().oauth2Login().loginPage("/login").userInfoEndpoint()
+			.userService(customOAuth2UserService)
+			.and().successHandler(customOAuth2LoginSuccessHandler);
 
-		http.authorizeRequests().antMatchers("/user/**").access("hasAnyRole('ROLE_USER')");
-
-		http.authorizeRequests().antMatchers("/manager/**").access("hasAnyRole('ROLE_MANAGER')");
-
-		http.authorizeRequests().and().exceptionHandling().accessDeniedPage("/403");
-
-		http.authorizeRequests().and().formLogin().loginPage("/login").usernameParameter("username")
-			.passwordParameter("password").loginProcessingUrl("/handler_login_success").successHandler(successHandler())
-			.failureUrl("/login?error=true").and().logout().logoutUrl("/logout")
-			.logoutSuccessUrl("/home").and().logout().deleteCookies("JSESSIONID", "remember-me");
-			//.and().rememberMe().tokenValiditySeconds(10).key("mySecret!");
-
-		http.authorizeRequests().and().rememberMe().rememberMeParameter("remember-me").key("uniqueAndSecret").tokenRepository(this.persistentTokenRepository())
+		//remember me
+		http.authorizeRequests()
+			.and().rememberMe().rememberMeParameter("remember-me")
+			.key("uniqueAndSecret").tokenRepository(this.persistentTokenRepository())
 			.tokenValiditySeconds(24*60*60);
 	}
+	
 }
