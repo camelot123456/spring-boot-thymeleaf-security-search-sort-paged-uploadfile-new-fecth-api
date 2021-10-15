@@ -13,13 +13,11 @@ public class UploadFileUtil {
 
 	public static void saveFile(String uploadDir, String fileName, MultipartFile multipartFile) throws IOException{
 		Path uploadPath = Paths.get(uploadDir);
-		System.out.println("uploadPath: " + uploadPath);
 		if (!Files.exists(uploadPath)) {
 			Files.createDirectories(uploadPath);
 		}
 		try(InputStream inputStream = multipartFile.getInputStream()){
 			Path filePath = uploadPath.resolve(fileName);
-			System.out.println("filePath: " + filePath);
 			Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
 		} catch (IOException e) {
 			// TODO: handle exception
@@ -32,7 +30,6 @@ public class UploadFileUtil {
 		try {
 			if (Files.exists(path)) {
 				Path filePath = path.resolve(fileName);
-				System.out.println("filePath: " + filePath);
 				Files.delete(filePath);
 			}
 		} catch (IOException e) {

@@ -10,9 +10,9 @@ public interface IProductService {
 	
 	public ProductEntity findOne(String id);
 	
-	public void save(ProductEntity entity);
+	public ProductEntity save(ProductEntity entity);
 	
-	public void update(ProductEntity entity);
+	public ProductEntity update(ProductEntity entity);
 	
 	public void delete(String[] ids, String[] images, String uploadDir);
 }

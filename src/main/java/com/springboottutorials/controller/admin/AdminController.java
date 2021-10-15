@@ -3,10 +3,13 @@ package com.springboottutorials.controller.admin;
 import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.repository.query.Param;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -69,26 +72,26 @@ public class AdminController {
 	}
 	
 	@RequestMapping(value = {"/admin/api/product"}, method = RequestMethod.POST, consumes = {"multipart/form-data"})
-	public String save(@RequestPart("product") ProductEntity product,
-			@RequestPart("file") MultipartFile file) throws IOException {
+	public ResponseEntity<ProductEntity> save(@RequestPart("product") ProductEntity product,
+			@RequestPart("file") MultipartFile file, 
+			HttpServletResponse resp) throws IOException {
+		
 		product.setImage(file.getOriginalFilename());
 		UploadFileUtil.saveFile(PATH_DIRECTORY, file.getOriginalFilename(), file);
-		productService.save(product);
-		return "redirect:/admin/products";
+		return new ResponseEntity<ProductEntity>(productService.save(product), HttpStatus.CREATED);
 	}
 	
 	@RequestMapping(value = {"/admin/api/product"}, method = RequestMethod.PUT, consumes = {"multipart/form-data"})
-	public String update(@RequestPart("product") ProductEntity product, @RequestPart("file") MultipartFile file) throws IOException {
+	public ResponseEntity<ProductEntity> update(@RequestPart("product") ProductEntity product, @RequestPart("file") MultipartFile file) throws IOException {
 		product.setImage(file.getOriginalFilename());
 		UploadFileUtil.saveFile(PATH_DIRECTORY, file.getOriginalFilename(), file);
-		productService.update(product);
-		return "redirect:/admin/products";
+		return new ResponseEntity<ProductEntity>(productService.update(product), HttpStatus.OK);
 	}
 	
 	@RequestMapping(value = {"/admin/api/product"}, method = RequestMethod.DELETE)
-	public String delete(@RequestPart("product") ProductEntity product) {
+	public ResponseEntity<String> delete(@RequestPart("product") ProductEntity product) {
 		productService.delete(product.getIds(), product.getImages(), PATH_DIRECTORY);
-		return "redirect:/admin/products";
+		return new ResponseEntity<String>("Product deleted successfully!", HttpStatus.OK);
 	}
 
 }

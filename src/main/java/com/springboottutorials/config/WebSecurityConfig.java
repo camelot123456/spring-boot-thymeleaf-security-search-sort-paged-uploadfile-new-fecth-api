@@ -61,7 +61,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		
 		//no authentication
 		http.authorizeRequests()
-			.antMatchers("/", "/login", "/logout", "/register", "oauth2/**")
+			.antMatchers("/", "/home", "/login", "/logout", "/register", "oauth2/**")
 			.permitAll();
 
 		//authorization

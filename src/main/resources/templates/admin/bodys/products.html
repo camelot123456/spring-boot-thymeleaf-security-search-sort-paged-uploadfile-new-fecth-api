@@ -94,8 +94,12 @@
 		  		</div>
 		  	</div>
 		  	<hr class="my-4">
+		  	<!-- -------------------------------------------------alert-noti------------------------------------------------ -->
+		  	<div class="alert alert-primary alert-body" role="alert" hidden>
+			  <span class="alert-msg">A simple primary alert—check it out!</span> <a hidden href="javascript:window.location.reload(true)" class="alert-link alert-link-msg">Làm mới lại trang để thấy sự thay đổi!</a>
+			</div>
 		  	<!-- -------------------------------------------------Bảng sản phẩm------------------------------------------------ -->
-			<table class="table table-hover">
+			<table class="table table-hover table-load">
 				<thead>
 					<tr>
 						<!-- -------------------------------------Xử lý sắp xếp theo thuộc tính------------------------------------------------ -->
@@ -127,7 +131,7 @@
 							</th>
 							<td scope="row">[[${state.count}]]</td>
 							<td id="id">[[${product.id}]]</td>
-							<td><img style="width: 100px; border-radius: 4px;" id="image" th:src="@{${product.imagePath}}"></td>
+							<td><img style="width: 100px; border-radius: 4px;" id="image" th:src="${product.imagePath}"></td>
 							<td id="name">[[${product.name}]]</td>
 							<td id="quantity">[[${product.quantity}]]</td>
 							<td id="price">[[${product.price}]]</td>
@@ -375,7 +379,10 @@
 	}
 	
 	//===========================================Tạo hàm call API=======================================================
-	var formAddEdit = $('.form-add-edit')	
+	var formAddEdit = $('.form-add-edit')
+	var alertMsg = $('.alert-msg')
+	var alertLinkMsg = $('.alert-link-msg')
+	var alertBody = $('.alert-body')
 	
 	function fetchAPI(_url, _method, _formData, successToast, failToast){
 		fetch(_url, {
@@ -384,16 +391,19 @@
 		})
 		.then(resp =>{
 			if(resp.status != 200){
-				toastContent.innerHTML = failToast
+				alertMsg.innerHTML = failToast
+				alertBody.classList.add('alert-danger')
 			}else{
-				toastContent.innerHTML = successToast
+				alertMsg.innerHTML = successToast
+				alertBody.classList.add('alert-success')
+				alertLinkMsg.removeAttribute('hidden')
 			}
-			toast.show()
 		})
 		.catch(err=>{
-			toastContent.innerHTML = failToast
-			toast.show()
+			alertMsg.innerHTML = failToast
+			alertBody.classList.add('alert-danger')
 		})
+		alertBody.removeAttribute('hidden')
 	}
 	//=======================================Xử lý thêm mới sản phẩm=======================================================
 	
@@ -415,7 +425,8 @@
 				type: 'application/json'
 			}))
 			fetchAPI('/admin/api/product', 'POST', formData, 'Thêm mới sản phẩm thành công', 'Thêm mới sản phẩm thất bại')
-			setTimeout("location.reload(true);",1000);
+			toggleCollapse()
+			//setTimeout("location.reload(true);",1000);
 		})
 	}
 	
@@ -464,7 +475,8 @@
 		}))
 		console.log(images)
 		fetchAPI('/admin/api/product', 'DELETE', formData, 'Xóa sản phẩm thành công', 'Xóa sản phẩm thất bại')
-		setTimeout("location.reload(true);",1000);
+		myModal.hide()
+		//setTimeout("location.reload(true);",1000);
 	})
 	
 	
@@ -487,7 +499,7 @@
 			type: 'application/json'
 		}))
 		fetchAPI('/admin/api/product', 'PUT', formData, 'Cập nhập sản phẩm thành công', 'Cập nhập sản phẩm thất bại')
-		setTimeout("location.reload(true);",1000);
+		//setTimeout("location.reload(true);",1000);
 	})
 
 </script>

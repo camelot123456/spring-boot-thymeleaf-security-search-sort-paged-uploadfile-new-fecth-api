@@ -7,41 +7,49 @@
 	                    <div class="card shadow-lg border-0 rounded-lg mt-5">
 	                        <div class="card-header"><h3 class="text-center font-weight-light my-4">Create Account</h3></div>
 	                        <div class="card-body">
-	                            <form>
+	                            <form class="form-signin" name="form-sign-in" enctype="multipart/form-data">
 	                                <div class="row mb-3">
-	                                    <div class="col-md-6">
-	                                        <div class="form-floating mb-3 mb-md-0">
-	                                            <input class="form-control" id="inputFirstName" type="text" placeholder="Enter your first name" />
-	                                            <label for="inputFirstName">First name</label>
+	                                    <div class="col-md-4">
+	                                        <div class="form-floating mb-3 mb-md-0 text-center">
+	                                            <img src="https://gravatar.loli.net/avatar/276eea5ce7f03d362bb505b746e26e33?d=mm&s=256" 
+	                                            style="cursor: pointer; width:150px; margin-bottom: 4px" class="rounded input-image">
+												<div class="mb-3">
+												  <label for="form" class="form-label">Small file input example</label>
+												  <input name="file" class="form-control form-control-sm file-image" id="form" type="file" accept=".jpg, .jpeg, .png">
+												</div>
 	                                        </div>
 	                                    </div>
-	                                    <div class="col-md-6">
-	                                        <div class="form-floating">
-	                                            <input class="form-control" id="inputLastName" type="text" placeholder="Enter your last name" />
-	                                            <label for="inputLastName">Last name</label>
+	                                    <div class="col-md-8">
+	                                        <div class="form-floating mb-3">
+	                                            <input name="fullname" class="form-control" id="inputLastName" type="text" placeholder="Enter your last name" />
+	                                            <label for="inputLastName">Họ & tên</label>
 	                                        </div>
-	                                    </div>
-	                                </div>
-	                                <div class="form-floating mb-3">
-	                                    <input class="form-control" id="inputEmail" type="email" placeholder="name@example.com" />
-	                                    <label for="inputEmail">Email address</label>
-	                                </div>
-	                                <div class="row mb-3">
-	                                    <div class="col-md-6">
-	                                        <div class="form-floating mb-3 mb-md-0">
+	                                        
+	                                        <div class="form-floating mb-3">
+			                                    <input name="username" class="form-control" id="inputEmail" type="text" placeholder="name@example.com" />
+			                                    <label for="inputEmail">Tên đăng nhập</label>
+			                                </div>
+			                                
+  	                                        <div class="form-floating mb-3">
 	                                            <input class="form-control" id="inputPassword" type="password" placeholder="Create a password" />
-	                                            <label for="inputPassword">Password</label>
+	                                            <label for="inputPassword">Mật khẩu</label>
 	                                        </div>
-	                                    </div>
-	                                    <div class="col-md-6">
-	                                        <div class="form-floating mb-3 mb-md-0">
-	                                            <input class="form-control" id="inputPasswordConfirm" type="password" placeholder="Confirm password" />
-	                                            <label for="inputPasswordConfirm">Confirm Password</label>
-	                                        </div>
+	                                        
+											<div class="form-floating mb-3">
+	                                            <input name="password" class="form-control" id="inputPasswordConfirm" type="password" placeholder="Confirm password" />
+	                                            <label for="inputPasswordConfirm">Xác thực mật khẩu</label>
+	                                        </div>	                                        
 	                                    </div>
 	                                </div>
+	                                
+	                                <div class="alert alert-success alert-msg-err" hidden>
+									  A simple danger alert—check it out!
+									</div>
+	                                
 	                                <div class="mt-4 mb-0">
-	                                    <div class="d-grid"><a class="btn btn-primary btn-block" href="/login">Create Account</a></div>
+	                                    <div class="d-grid">
+	                                    	<button class="btn btn-primary btn-block btn-sign-in" type="button">Create Account</button>
+	                                    </div>
 	                                </div>
 	                            </form>
 	                        </div>
@@ -55,3 +63,78 @@
 	    </main>
 	</div>
 </th:block>
+
+<script>
+	var $ = document.querySelector.bind(document)
+	var $$ = document.querySelectorAll.bind(document)
+	
+	var formSignIn = $('.form-signin')
+	var btnSignIn = $('.btn-sign-in')
+	var alertMsgErr = $('.alert-msg-err')
+	var fileImage = $('.file-image')
+	var inputImage = $('.input-image')
+	
+	
+	function uploadFile(_fileInput){
+		var file = _fileInput.files[0]
+		var reader = new FileReader()
+		
+		reader.addEventListener('load', (e)=>{
+			inputImage.src = e.target.result
+		})
+		
+		reader.readAsDataURL(file)
+
+	}
+	
+	inputImage.addEventListener('click', (e)=>{
+		fileImage.click()
+	})
+	
+	fileImage.addEventListener('change', (e)=>{
+		uploadFile(fileImage)
+	})
+	
+	function fetchAPI(_url, _method, _data, _messageSuccess, _messageError){
+		fetch(_url, {
+			method: _method,
+			body: _data
+		})
+		.then(resp=>{
+			if(resp.status != 200){
+				alertMsgErr.innerHTML = _messageError
+				alertMsgErr.classList.add('alert-danger')
+			} else {
+				alertMsgErr.innerHTML = _messageSuccess
+				alertMsgErr.classList.add('alert-success')
+				resp.text().then(data=>{
+					console.log(data)
+				})
+			}
+				alertMsgErr.removeAttribute('hidden', 'hidden')
+		})
+		.catch(err=>{
+			alertMsgErr.innerHTML = _messageError
+			alertMsgErr.classList.add('alert-danger')
+			alertMsgErr.removeAttribute('hidden', 'hidden')
+		})
+	}
+	
+	btnSignIn.addEventListener('click', (e)=>{
+		var formData = new FormData(formSignIn)
+		
+		formData.append('file', document.forms['form-sign-in'].file.files[0])
+		formData.append('account', new Blob([JSON.stringify({
+			'fullname': formData.get('fullname'),
+			'username': formData.get('username'),
+			'password': formData.get('password')
+		})], {
+			type: 'application/json'
+		}))
+		
+		fetchAPI('/handler_sign_in', 'POST', formData, 'Đăng ký tài khoản thành công', 'Đăng ký tài khoản thất bại')
+		//setTimeout('location.reload(true)', 1000)
+	})
+	
+	
+</script>

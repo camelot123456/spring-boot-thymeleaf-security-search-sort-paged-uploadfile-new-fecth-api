@@ -9,6 +9,7 @@ import com.springboottutorials.entity.AccountEntity;
 import com.springboottutorials.entity.enums.EAuthenticationProvider;
 import com.springboottutorials.repository.IAccountRepository;
 import com.springboottutorials.service.IAccountService;
+import com.springboottutorials.utils.EncryptedPasswordUtil;
 
 @Service
 public class AccountService implements IAccountService {
@@ -25,6 +26,9 @@ public class AccountService implements IAccountService {
 	@Override
 	public void save(AccountEntity entity) {
 		// TODO Auto-generated method stub
+		entity.setAuthProvider(EAuthenticationProvider.LOCAL);
+		entity.setId(generationCode(entity.getAuthProvider(), ""));
+		entity.setPassword(EncryptedPasswordUtil.encryptedPassword(entity.getPassword()));
 		accountRepository.save(entity);
 	}
 
@@ -59,7 +63,7 @@ public class AccountService implements IAccountService {
 		account.setFullname(name);
 		account.setImage(avatar);
 		account.setAuthProvider(provider);
-		account.setId(id);
+		account.setId(generationCode(provider, id));
 		accountRepository.save(account);
 	}
 
@@ -80,5 +84,12 @@ public class AccountService implements IAccountService {
 		return accountRepository.findOneById(id);
 	}
 
+	public String generationCode(EAuthenticationProvider provider, String id) {
+		if (provider.toString() != "LOCAL") {
+			return provider.toString() + id;
+		} else {
+			return "LOCAL" + System.currentTimeMillis();
+		}
+	}
 
 }

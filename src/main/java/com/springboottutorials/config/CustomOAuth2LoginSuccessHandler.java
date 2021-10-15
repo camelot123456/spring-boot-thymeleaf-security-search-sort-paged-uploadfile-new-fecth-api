@@ -40,7 +40,7 @@ public class CustomOAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSucc
 //		System.out.println("avatar: " + avatar);
 //		System.out.println("email: " + email);
 //		System.out.println("authenticationProvider: " + authenticationProvider);
-		AccountEntity account = accountService.findOneById(id);
+		AccountEntity account = accountService.findOneById(authenticationProvider.toString() + id);
 		
 		request.getSession().setAttribute(SystemConstant.ACCOUNT, account);
 

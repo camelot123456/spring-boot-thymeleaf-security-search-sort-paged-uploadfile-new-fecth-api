@@ -26,6 +26,7 @@ public class DetailsService implements UserDetailsService{
 		// TODO Auto-generated method stub
 		AccountEntity account = accountRepository.findOneByUsername(username);
 		
+		
 		if (account == null) {
 			throw new UsernameNotFoundException("Username not found!");
 		}

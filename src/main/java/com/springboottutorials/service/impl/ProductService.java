@@ -7,6 +7,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.springboottutorials.entity.ProductEntity;
+import com.springboottutorials.exception.ResourceNotFoundException;
 import com.springboottutorials.repository.IProductRepository;
 import com.springboottutorials.service.IProductService;
 import com.springboottutorials.utils.UploadFileUtil;
@@ -16,7 +17,7 @@ public class ProductService implements IProductService {
 
 	@Autowired
 	private IProductRepository productRepository;
-	
+
 	@Override
 	public Page<ProductEntity> findAll(int pageNumber, String sortField, String sortDir, String keyword) {
 		// TODO Auto-generated method stub
@@ -30,20 +31,22 @@ public class ProductService implements IProductService {
 	}
 
 	@Override
-	public void save(ProductEntity entity) {
+	public ProductEntity save(ProductEntity entity) {
 		// TODO Auto-generated method stub
 		if (!productRepository.existsById(entity.getId())) {
-			productRepository.save(entity);
-		}
-		
+			return productRepository.save(entity);
+		} else
+			return null;
+
 	}
 
 	@Override
-	public void update(ProductEntity entity) {
+	public ProductEntity update(ProductEntity entity) {
 		// TODO Auto-generated method stub
 		if (productRepository.existsById(entity.getId())) {
-			productRepository.save(entity);
-		}
+			return productRepository.save(entity);
+		} else
+			return null;
 	}
 
 	@Override
@@ -58,7 +61,14 @@ public class ProductService implements IProductService {
 	@Override
 	public ProductEntity findOne(String id) {
 		// TODO Auto-generated method stub
-		return productRepository.findOneById(id);
+//		Optional<ProductEntity> product = productRepository.findById(id);
+//		if (product.isPresent()) {
+//			return product.get();
+//		} else {
+//			throw new ResourceNotFoundException("Product", "Id", id);
+//		}
+		return productRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Product", "Id", id));
 	}
 
 }

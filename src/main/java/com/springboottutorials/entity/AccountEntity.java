@@ -13,6 +13,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 import com.springboottutorials.entity.enums.EAuthenticationProvider;
 
@@ -25,14 +28,20 @@ public class AccountEntity {
 	private String id;
 
 	@Column(name = "fullname", columnDefinition = "nvarchar(255) null")
+	@NotBlank(message = "Trường này không được để rỗng!")
+	@Size(min=2, max=40)
 	private String fullname;
 
 	@Column(name = "[IMAGE]", columnDefinition = "nvarchar(255) default N'https://friconix.com/jpg/fi-cnsuxl-question-mark.jpg'")
 	private String image;
 	
+	@NotBlank(message = "Trường này không được để rỗng!")
+	@Size(min=6, max=100, message = "Số ký tự không được nhỏ hơn 6 hoặc lớn hơn 100!")
 	@Column(name = "USERNAME", columnDefinition = "varchar(255) null")
 	private String username;
-
+	
+	@NotBlank(message = "Trường này không được để rỗng!")
+	@Size(min=6, max=100, message = "Số ký tự không được nhỏ hơn 6 hoặc lớn hơn 100!")
 	@Column(name = "[PASSWORD]", columnDefinition = "varchar(255) default '1'")
 	private String password;
 
@@ -98,5 +107,19 @@ public class AccountEntity {
 
 	public void setAuthProvider(EAuthenticationProvider authProvider) {
 		this.authProvider = authProvider;
+	}
+
+	@Transient
+	public String getImagePath() {
+		if (image == null) {
+			return null;
+		}
+		return "/img/avatar/"+image;
+	}
+	
+	@Override
+	public String toString() {
+		return "AccountEntity [id=" + id + ", fullname=" + fullname + ", image=" + image + ", username=" + username
+				+ ", password=" + password + ", authProvider=" + authProvider + ", roles=" + roles + "]";
 	}
 }
