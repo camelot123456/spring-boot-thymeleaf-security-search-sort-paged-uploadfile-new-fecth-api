@@ -1,4 +1,4 @@
-package com.springboottutorials.controller.admin;
+package com.springboottutorials.controller;
 
 import java.io.IOException;
 
@@ -78,7 +78,7 @@ public class AdminController {
 		
 		product.setImage(file.getOriginalFilename());
 		UploadFileUtil.saveFile(PATH_DIRECTORY, file.getOriginalFilename(), file);
-		return new ResponseEntity<ProductEntity>(productService.save(product), HttpStatus.CREATED);
+		return new ResponseEntity<ProductEntity>(productService.save(product), HttpStatus.OK);
 	}
 	
 	@RequestMapping(value = {"/admin/api/product"}, method = RequestMethod.PUT, consumes = {"multipart/form-data"})

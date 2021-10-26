@@ -1,6 +1,5 @@
 package com.springboottutorials.entity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -9,6 +8,17 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
+@Data
+@ToString
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "[ROLE]")
 public class RoleEntity {
@@ -24,38 +34,6 @@ public class RoleEntity {
 	private String code;
 
 	@ManyToMany(mappedBy = "roles")
-	private List<AccountEntity> accounts = new ArrayList<>();
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getCode() {
-		return code;
-	}
-
-	public void setCode(String code) {
-		this.code = code;
-	}
-
-	public List<AccountEntity> getAccounts() {
-		return accounts;
-	}
-
-	public void setAccounts(List<AccountEntity> accounts) {
-		this.accounts = accounts;
-	}
+	private List<AccountEntity> accounts;
 
 }

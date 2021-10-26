@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+	<meta charset="UTF-8">
+	<title>Insert title here</title>
+	<th:block th:insert="taglib.html :: head"></th:block>
+</head>
+<body>
+	<th:block th:insert="admin/fragments/navbar.html :: navbar"></th:block>
+    <div id="layoutSidenav">
+        <div id="layoutSidenav_content">
+            <th:block layout:fragment="content"></th:block>
+			<th:block th:insert="taglib.html :: footer"></th:block>
+        </div>
+    </div>
+    <th:block th:insert="taglib.html :: link_js"></th:block>
+</body>
+</html>

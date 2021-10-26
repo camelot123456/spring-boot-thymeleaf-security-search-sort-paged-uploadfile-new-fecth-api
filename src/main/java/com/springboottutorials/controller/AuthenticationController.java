@@ -1,4 +1,4 @@
-package com.springboottutorials.controller.authentication;
+package com.springboottutorials.controller;
 
 import java.io.IOException;
 

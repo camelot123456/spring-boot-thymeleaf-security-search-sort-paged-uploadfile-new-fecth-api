@@ -58,12 +58,14 @@ public class AccountService implements IAccountService {
 	public void saveOneNewAccountByOAuth(String id, String email, String name, String avatar,
 			EAuthenticationProvider provider) {
 		// TODO Auto-generated method stub
-		AccountEntity account = new AccountEntity();
-		account.setUsername(email);
-		account.setFullname(name);
-		account.setImage(avatar);
-		account.setAuthProvider(provider);
-		account.setId(generationCode(provider, id));
+		AccountEntity account = AccountEntity.builder()
+				.username(email)
+				.fullname(name)
+				.image(avatar)
+				.authProvider(provider)
+				.id(generationCode(provider, id))
+				.build();
+		
 		accountRepository.save(account);
 	}
 

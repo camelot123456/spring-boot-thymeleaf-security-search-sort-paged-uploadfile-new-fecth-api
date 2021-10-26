@@ -1,6 +1,5 @@
 package com.springboottutorials.entity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -19,6 +18,17 @@ import javax.validation.constraints.Size;
 
 import com.springboottutorials.entity.enums.EAuthenticationProvider;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
+@Data
+@ToString
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "ACCOUNT")
 public class AccountEntity {
@@ -51,63 +61,7 @@ public class AccountEntity {
 	
 	@ManyToMany(fetch=FetchType.EAGER)
 	@JoinTable(name = "ACCOUNT_ROLE", joinColumns = @JoinColumn(name = "ID_ACCOUNT"), inverseJoinColumns = @JoinColumn(name = "ID_ROLE"))
-	private List<RoleEntity> roles = new ArrayList<>();
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public String getFullname() {
-		return fullname;
-	}
-
-	public void setFullname(String fullname) {
-		this.fullname = fullname;
-	}
-
-	public String getImage() {
-		return image;
-	}
-
-	public void setImage(String image) {
-		this.image = image;
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public List<RoleEntity> getRoles() {
-		return roles;
-	} 
-
-	public void setRoles(List<RoleEntity> roles) {
-		this.roles = roles;
-	}
-
-	public EAuthenticationProvider getAuthProvider() {
-		return authProvider;
-	}
-
-	public void setAuthProvider(EAuthenticationProvider authProvider) {
-		this.authProvider = authProvider;
-	}
+	private List<RoleEntity> roles;
 
 	@Transient
 	public String getImagePath() {
@@ -116,10 +70,5 @@ public class AccountEntity {
 		}
 		return "/img/avatar/"+image;
 	}
-	
-	@Override
-	public String toString() {
-		return "AccountEntity [id=" + id + ", fullname=" + fullname + ", image=" + image + ", username=" + username
-				+ ", password=" + password + ", authProvider=" + authProvider + ", roles=" + roles + "]";
-	}
+
 }

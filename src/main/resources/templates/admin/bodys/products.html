@@ -295,7 +295,6 @@
 		})
 		
 		fileInput.addEventListener('change', (e)=>{
-			//fileImg.src = `/img/base/${fileInput.value.split(/(\\|\/)/g).pop()}`
 			showImageThumbnail(fileInput)
 		})
 	}
@@ -391,19 +390,15 @@
 		})
 		.then(resp =>{
 			if(resp.status != 200){
-				alertMsg.innerHTML = failToast
-				alertBody.classList.add('alert-danger')
+				varSessionMessageApi.innerHTML = failToast
 			}else{
-				alertMsg.innerHTML = successToast
-				alertBody.classList.add('alert-success')
-				alertLinkMsg.removeAttribute('hidden')
+				varSessionMessageApi.innerHTML = successToast
 			}
 		})
 		.catch(err=>{
-			alertMsg.innerHTML = failToast
-			alertBody.classList.add('alert-danger')
+			varSessionMessageApi.innerHTML = failToast
 		})
-		alertBody.removeAttribute('hidden')
+		toast.show()
 	}
 	//=======================================Xử lý thêm mới sản phẩm=======================================================
 	
@@ -425,8 +420,8 @@
 				type: 'application/json'
 			}))
 			fetchAPI('/admin/api/product', 'POST', formData, 'Thêm mới sản phẩm thành công', 'Thêm mới sản phẩm thất bại')
-			toggleCollapse()
-			//setTimeout("location.reload(true);",1000);
+			//toggleCollapse()
+			setTimeout("location.reload(true);",1000);
 		})
 	}
 	
@@ -476,7 +471,7 @@
 		console.log(images)
 		fetchAPI('/admin/api/product', 'DELETE', formData, 'Xóa sản phẩm thành công', 'Xóa sản phẩm thất bại')
 		myModal.hide()
-		//setTimeout("location.reload(true);",1000);
+		setTimeout("location.reload(true);",1000);
 	})
 	
 	
@@ -499,7 +494,7 @@
 			type: 'application/json'
 		}))
 		fetchAPI('/admin/api/product', 'PUT', formData, 'Cập nhập sản phẩm thành công', 'Cập nhập sản phẩm thất bại')
-		//setTimeout("location.reload(true);",1000);
+		setTimeout("location.reload(true);",1000);
 	})
 
 </script>
